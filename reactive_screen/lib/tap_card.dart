@@ -23,7 +23,7 @@ class _TapCardState extends State<TapCard> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(true), 
             child: const Text('Reset'),
-          )
+          ),
         ],
       ),
     );
