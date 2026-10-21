@@ -62,6 +62,13 @@ class Event {
   /// Record getter, destructured where shown: `final (:taken, :free) = e.places;`
   ({int taken, int free}) get places => (taken: count, free: free);
 
+  /// Display order: upcoming first, past last; inside each group by date.
+  /// Used on a copy (`toList()..sort(...)`), never on the shell's list.
+  static int compareForDisplay(Event a, Event b) {
+    if (a.isPast != b.isPast) return a.isPast ? 1 : -1;
+    return a.starts.compareTo(b.starts);
+  }
+
   /// Returns a copy with [name] added — the original stays untouched.
   Event register(String name) => copyWith(attendees: [..._attendees, name]);
 
