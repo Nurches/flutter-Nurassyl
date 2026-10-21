@@ -90,7 +90,14 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Future<void> _edit() async {
-    // Filled in together with the form screen.
+    final edited = await Navigator.pushNamed<Event>(
+      context,
+      Routes.form,
+      arguments: FormArgs(event: _event),
+    );
+    // null = the user backed out: nothing changes.
+    if (edited == null || !mounted) return;
+    _update(edited);
   }
 
   Future<void> _delete() async {
