@@ -1,29 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'data/seed.dart';
-import 'models/event.dart';
-import 'screens/events_tab.dart';
+import 'screens/home_shell.dart';
 
 void main() => runApp(const MyApp());
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  List<Event> _events = seedEvents();
-
-  void _toggleFavourite(Event event) {
-    setState(() {
-      _events = [
-        for (final e in _events)
-          if (e.id == event.id) e.copyWith(isFavourite: !e.isFavourite) else e,
-      ];
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,14 +14,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
       ),
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Campus Events')),
-        body: EventsTab(
-          events: _events,
-          onOpen: (_) {},
-          onFavourite: _toggleFavourite,
-        ),
-      ),
+      home: const HomeShell(),
     );
   }
 }
