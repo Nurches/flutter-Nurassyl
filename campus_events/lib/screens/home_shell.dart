@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/seed.dart';
 import '../models/event.dart';
 import '../models/profile.dart';
+import '../routes.dart';
 import 'events_tab.dart';
 import 'favourites_tab.dart';
 import 'profile_tab.dart';
@@ -46,8 +47,24 @@ class _HomeShellState extends State<HomeShell> {
   void _toggleFavourite(Event event) =>
       _replace(event.copyWith(isFavourite: !event.isFavourite));
 
+  void _delete(Event event) {
+    setState(() => _events = _events.where((e) => e.id != event.id).toList());
+  }
+
+  /// The detail gets the event plus callbacks: it changes shell state
+  /// while staying open, so a single return value would not be enough.
   void _openDetail(Event event) {
-    // Wired up together with the routes.
+    Navigator.pushNamed(
+      context,
+      Routes.detail,
+      arguments: DetailArgs(
+        event: event,
+        userName: _profile.name,
+        onChanged: _replace,
+        onDelete: _delete,
+        onGoToProfile: () => _selectTab(2),
+      ),
+    );
   }
 
   void _showAbout() {
