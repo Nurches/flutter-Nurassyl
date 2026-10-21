@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'models/event.dart';
 import 'screens/detail_screen.dart';
+import 'screens/event_form_screen.dart';
 
 /// Every route name in one place — no '/...' literal anywhere else.
 abstract final class Routes {
   static const home = '/';
   static const detail = '/detail';
+  static const form = '/form';
 
   /// Builds the pushed screens from typed argument classes. Returning null
   /// (wrong name or wrong argument type) hands over to [onUnknownRoute].
@@ -15,6 +17,10 @@ abstract final class Routes {
       (Routes.detail, final DetailArgs args) => MaterialPageRoute<void>(
         settings: settings,
         builder: (_) => DetailScreen(args: args),
+      ),
+      (Routes.form, final FormArgs args) => MaterialPageRoute<Event>(
+        settings: settings,
+        builder: (_) => EventFormScreen(event: args.event),
       ),
       _ => null,
     };
@@ -44,6 +50,13 @@ class DetailArgs {
   final ValueChanged<Event> onChanged;
   final ValueChanged<Event> onDelete;
   final VoidCallback onGoToProfile;
+}
+
+/// null for a new event, the event itself for editing.
+class FormArgs {
+  const FormArgs({this.event});
+
+  final Event? event;
 }
 
 class _NotFoundScreen extends StatelessWidget {

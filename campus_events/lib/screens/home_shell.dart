@@ -67,6 +67,17 @@ class _HomeShellState extends State<HomeShell> {
     );
   }
 
+  /// The form returns a value: it only creates, so a result is all we need.
+  Future<void> _createEvent() async {
+    final created = await Navigator.pushNamed<Event>(
+      context,
+      Routes.form,
+      arguments: const FormArgs(),
+    );
+    if (created == null || !mounted) return;
+    setState(() => _events = [..._events, created]);
+  }
+
   void _showAbout() {
     Navigator.pop(context); // closes the drawer
     showDialog<void>(
@@ -176,6 +187,13 @@ class _HomeShellState extends State<HomeShell> {
           ),
         ],
       ),
+      floatingActionButton: _tab == 0
+          ? FloatingActionButton.extended(
+              onPressed: _createEvent,
+              icon: const Icon(Icons.add),
+              label: const Text('New event'),
+            )
+          : null,
       bottomNavigationBar: NavigationBar(
         selectedIndex: _tab,
         onDestinationSelected: _selectTab,

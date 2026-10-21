@@ -11,7 +11,9 @@ String _two(int n) => n.toString().padLeft(2, '0');
 String formatDate(DateTime d) => '${d.day} ${_months[d.month - 1]}';
 
 /// 10:00 — hours and minutes padded, so 9:05 is "09:05", not "9:5".
-String formatTime(DateTime d) => '${_two(d.hour)}:${_two(d.minute)}';
+String formatClock(int hour, int minute) => '${_two(hour)}:${_two(minute)}';
+
+String formatTime(DateTime d) => formatClock(d.hour, d.minute);
 
 /// 18 Oct, 10:00
 String formatDateTime(DateTime d) => '${formatDate(d)}, ${formatTime(d)}';
