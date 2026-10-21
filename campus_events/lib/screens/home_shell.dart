@@ -4,6 +4,7 @@ import '../data/seed.dart';
 import '../models/event.dart';
 import '../models/profile.dart';
 import '../routes.dart';
+import '../widgets/icon_tile.dart';
 import 'events_tab.dart';
 import 'favourites_tab.dart';
 import 'profile_tab.dart';
@@ -149,14 +150,14 @@ class _HomeShellState extends State<HomeShell> {
                 ),
               ),
             ),
-            ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: const Text('About'),
+            IconTile(
+              icon: const Icon(Icons.info_outline),
+              title: 'About',
               onTap: _showAbout,
             ),
-            ListTile(
-              leading: const Icon(Icons.restore),
-              title: const Text('Reset data'),
+            IconTile(
+              icon: const Icon(Icons.restore),
+              title: 'Reset data',
               onTap: _resetData,
             ),
           ],

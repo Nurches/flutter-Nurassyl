@@ -7,6 +7,7 @@ import '../models/event.dart';
 import '../routes.dart';
 import '../utils/format.dart';
 import '../widgets/empty_state.dart';
+import '../widgets/icon_tile.dart';
 
 enum _MenuAction { edit, delete }
 
@@ -149,16 +150,16 @@ class _DetailScreenState extends State<DetailScreen> {
               itemBuilder: (context) => const [
                 PopupMenuItem(
                   value: _MenuAction.edit,
-                  child: ListTile(
-                    leading: Icon(Icons.edit),
-                    title: Text('Edit'),
+                  child: Row(
+                    spacing: 12,
+                    children: [Icon(Icons.edit), Text('Edit')],
                   ),
                 ),
                 PopupMenuItem(
                   value: _MenuAction.delete,
-                  child: ListTile(
-                    leading: Icon(Icons.delete),
-                    title: Text('Delete'),
+                  child: Row(
+                    spacing: 12,
+                    children: [Icon(Icons.delete), Text('Delete')],
                   ),
                 ),
               ],
@@ -271,20 +272,20 @@ class _AboutTab extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: 8),
       children: [
-        ListTile(
-          leading: const Icon(Icons.schedule),
-          title: Text(formatDateTime(event.starts)),
-          subtitle: Text('Until ${formatTime(event.ends)}'),
+        IconTile(
+          icon: const Icon(Icons.schedule),
+          title: formatDateTime(event.starts),
+          subtitle: 'Until ${formatTime(event.ends)}',
         ),
-        ListTile(
-          leading: Icon(event.isOnline ? Icons.link : Icons.place),
-          title: Text(event.location),
-          subtitle: Text(event.isOnline ? 'Online meeting link' : 'On campus'),
+        IconTile(
+          icon: Icon(event.isOnline ? Icons.link : Icons.place),
+          title: event.location,
+          subtitle: event.isOnline ? 'Online meeting link' : 'On campus',
         ),
-        ListTile(
-          leading: const Icon(Icons.event_seat),
-          title: Text('$taken of ${event.capacity} places taken'),
-          subtitle: Text(event.isFull ? 'Full' : '$free free'),
+        IconTile(
+          icon: const Icon(Icons.event_seat),
+          title: '$taken of ${event.capacity} places taken',
+          subtitle: event.isFull ? 'Full' : '$free free',
         ),
         // Shown only when present: collection if with a null-check pattern.
         if (event.description case final text?)
@@ -314,11 +315,11 @@ class _AttendeesTab extends StatelessWidget {
     return ListView(
       children: [
         for (final name in event.attendees)
-          ListTile(
+          IconTile(
             selected: name == me,
-            leading: CircleAvatar(child: Text(name.characters.first)),
-            title: Text(name),
-            trailing: name == me ? const Text('You') : null,
+            icon: CircleAvatar(child: Text(name.characters.first)),
+            title: name,
+            trailing: name == me ? const Chip(label: Text('You')) : null,
           ),
       ],
     );
