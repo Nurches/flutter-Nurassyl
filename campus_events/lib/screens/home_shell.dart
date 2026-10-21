@@ -5,11 +5,20 @@ import '../models/event.dart';
 import '../models/profile.dart';
 import 'events_tab.dart';
 import 'favourites_tab.dart';
+import 'profile_tab.dart';
 
 /// The shell owns the app's data: the events and the profile live here,
 /// tabs receive them as parameters and report changes through callbacks.
 class HomeShell extends StatefulWidget {
-  const HomeShell({super.key});
+  const HomeShell({
+    super.key,
+    required this.themeMode,
+    required this.onThemeModeChanged,
+  });
+
+  /// Lives in MyApp's State; the shell only passes it down to the profile.
+  final ThemeMode themeMode;
+  final ValueChanged<ThemeMode> onThemeModeChanged;
 
   @override
   State<HomeShell> createState() => _HomeShellState();
@@ -31,6 +40,8 @@ class _HomeShellState extends State<HomeShell> {
       ];
     });
   }
+
+  void _updateProfile(Profile profile) => setState(() => _profile = profile);
 
   void _toggleFavourite(Event event) =>
       _replace(event.copyWith(isFavourite: !event.isFavourite));
@@ -139,7 +150,13 @@ class _HomeShellState extends State<HomeShell> {
             onFavourite: _toggleFavourite,
             onBrowse: () => _selectTab(0),
           ),
-          Center(child: Text(_profile.name)),
+          ProfileTab(
+            profile: _profile,
+            events: _events,
+            onChanged: _updateProfile,
+            themeMode: widget.themeMode,
+            onThemeModeChanged: widget.onThemeModeChanged,
+          ),
         ],
       ),
       bottomNavigationBar: NavigationBar(
