@@ -24,3 +24,28 @@ added means the whole screen and every row are rebuilt.
   Only `add` can change the cart, and `add` always notifies.
 - A `BuildContext` field in `Cart` would break that `main()` check: no context exists before `runApp`.
   If the model needs a context, it is doing a widget's job.
+
+## Level 3 — The same app with provider
+
+`grep -r "cart:" lib/` finds nothing. No widget between the provider and the badge knows the cart exists.
+(The Level 1 total in the badge has been dropped. With provider, the same request would be one line in `CartBadge`
+and **0 constructors**.)
+
+**The loud one.** Using `context.watch<Cart>().add(b)` in the Add button's `onPressed` throws on tap:
+
+```
+Tried to listen to a value exposed with provider, from outside of the widget tree.
+
+This is likely caused by an event handler (like a button's onPressed) that called
+Provider.of without passing `listen: false`.
+
+To fix, write:
+Provider.of<Cart>(context, listen: false);
+
+It is unsupported because may pointlessly rebuild the widget associated to the
+event handler, when the widget tree doesn't care about the value.
+```
+
+**The silent one.** Using `context.read<Cart>().count` in `CartBadge.build` gives **no error at all**. It compiles and runs,
+and the badge is frozen at **0** forever, even after books are added, because the badge never said "I depend on the cart".
+`read` is a verb of `onPressed`, and `watch` is a verb of `build`.
