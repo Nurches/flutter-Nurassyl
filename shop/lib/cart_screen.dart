@@ -9,41 +9,46 @@ class CartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Cart')),
+      appBar: AppBar(
+        title: const Text('Cart'),
+        actions: const [_ClearButton()],
+      ),
       body: Column(
         children: [
           // Consumer: the builder already holds the cart, no verb needed inside.
           Expanded(
             child: Consumer<Cart>(
-              builder: (context, cart, _) => ListView.builder(
-                itemCount: cart.items.length,
-                itemBuilder: (context, i) {
-                  final b = cart.items[i];
-                  return ListTile(
-                    title: Text(b.title),
-                    subtitle: Text('${b.price} ₸'),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          '×${cart.qtyOf(b)}',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        IconButton(
-                          tooltip: 'One more',
-                          icon: const Icon(Icons.add),
-                          onPressed: () => cart.increment(b),
-                        ),
-                        IconButton(
-                          tooltip: 'Remove',
-                          icon: const Icon(Icons.close),
-                          onPressed: () => cart.remove(b),
-                        ),
-                      ],
+              builder: (context, cart, _) => cart.count == 0
+                  ? const Center(child: Text('Your cart is empty'))
+                  : ListView.builder(
+                      itemCount: cart.items.length,
+                      itemBuilder: (context, i) {
+                        final b = cart.items[i];
+                        return ListTile(
+                          title: Text(b.title),
+                          subtitle: Text('${b.price} ₸'),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '×${cart.qtyOf(b)}',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              IconButton(
+                                tooltip: 'One more',
+                                icon: const Icon(Icons.add),
+                                onPressed: () => cart.increment(b),
+                              ),
+                              IconButton(
+                                tooltip: 'Remove',
+                                icon: const Icon(Icons.close),
+                                onPressed: () => cart.remove(b),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ),
           const Divider(height: 1),
@@ -84,5 +89,44 @@ class _TotalLabel extends StatelessWidget {
         Text('Total', style: Theme.of(context).textTheme.titleLarge),
       ],
     );
+  }
+}
+
+/// Asks first (the question lives in the widget), clears only on "yes"
+/// (the clearing lives in the model).
+class _ClearButton extends StatelessWidget {
+  const _ClearButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final empty = context.select<Cart, bool>((c) => c.count == 0);
+    return IconButton(
+      tooltip: 'Clear cart',
+      icon: const Icon(Icons.delete_sweep_outlined),
+      onPressed: empty ? null : () => _confirm(context),
+    );
+  }
+
+  Future<void> _confirm(BuildContext context) async {
+    final yes = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Clear cart?'),
+        content: const Text('Every book will be removed from the cart.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Clear'),
+          ),
+        ],
+      ),
+    );
+    // After an await the screen may be gone: check before using context.
+    if (!context.mounted) return;
+    if (yes ?? false) context.read<Cart>().clear();
   }
 }

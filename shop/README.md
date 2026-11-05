@@ -1,17 +1,13 @@
-# shop
+# shop — Practice 9: Put It High, Subscribe Low
 
-A new Flutter project.
+A Books screen with Add buttons, a cart badge, and a Cart screen on a second route, built twice:
 
-## Getting Started
+1. **lifted**: the cart is a `List` in a `StatefulWidget` above `MaterialApp`, passed down by hand (commit `lifted`).
+2. **provided**: `Cart extends ChangeNotifier` (`lib/models/cart.dart`) is put in the tree once with
+   `ChangeNotifierProvider` and reached with `watch` / `read` / `select` / `Consumer`.
 
-This project is a starting point for a Flutter application.
+Measurements, provider error texts and *Where does it live?* are in [NOTES.md](NOTES.md).
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+| Books (two added, badge 2) | Cart (quantity 2, total) |
+|---|---|
+| ![books](screenshot_books.png) | ![cart](screenshot_cart.png) |

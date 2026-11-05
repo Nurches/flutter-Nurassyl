@@ -53,4 +53,42 @@ void main() {
     await tester.pumpAndSettle();
     expect(badge('1'), findsOneWidget);
   });
+
+  testWidgets('Add shows a SnackBar decided by the widget', (tester) async {
+    await tester.pumpWidget(app());
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Add').first);
+    await tester.pump();
+    expect(find.text('Added "Widgets All the Way Down"'), findsOneWidget);
+  });
+
+  testWidgets('Clear asks first and clears only on yes', (tester) async {
+    await tester.pumpWidget(app());
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Add').first);
+    await tester.pump();
+    await tester.tap(find.byTooltip('Cart'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Clear cart'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    expect(find.text('×1'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Clear cart'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Clear'));
+    await tester.pumpAndSettle();
+    expect(find.text('Your cart is empty'), findsOneWidget);
+    expect(find.text('0 ₸'), findsOneWidget);
+  });
+
+  testWidgets('the search field filters the list', (tester) async {
+    await tester.pumpWidget(app());
+    await tester.enterText(find.byType(TextField), 'navigator');
+    await tester.pump();
+    expect(find.byType(ListTile), findsOneWidget);
+    await tester.enterText(find.byType(TextField), 'zzz');
+    await tester.pump();
+    expect(find.text('Nothing found'), findsOneWidget);
+  });
 }

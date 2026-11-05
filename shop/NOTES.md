@@ -74,3 +74,22 @@ Same model, same taps, one line changed in one widget. `watch` rebuilds on every
 
 DevTools → Performance → *Track widget builds* shows the same picture. The numbers above come from the
 console lines, measured in a widget test that collects `debugPrint` output.
+
+## Level 5 — Logic on the right side of the line
+
+- **Added SnackBar.** `Cart.add` returns a `bool`, and the row decides:
+  `final ok = context.read<Cart>().add(b); if (ok) ScaffoldMessenger…showSnackBar(…)`.
+  When the model says no (the book is already there), nothing is shown.
+- **Clear cart.** The question lives in the widget: `showDialog<bool>` with an `AlertDialog`, then
+  `context.mounted` after the `await`. The clearing lives in the model, and `context.read<Cart>().clear()` runs only on `true`.
+  The button is disabled while the cart is empty (`select` on `count == 0`).
+- `models/` has no `BuildContext`, `SnackBar`, `Navigator`, colour or widget. `cart.dart` imports only `foundation.dart`.
+
+### Where does it live?
+
+| Value | Home | Why |
+|---|---|---|
+| The cart | **provided** (`ChangeNotifierProvider<Cart>` above `MaterialApp`) | Two routes and the badge read it, it changes from both screens, and it must survive navigation. |
+| Search text in the Books AppBar | **ephemeral** (`_query` in `_BooksScreenState`) | Only the Books list reads it. Losing it when the screen goes away is fine. |
+| Cart total expanded / collapsed | **ephemeral** (a `bool` in the Cart screen's `State`) | Pure view state of one widget. No other screen cares, and the model must not know about layout. |
+| Theme mode (a dark-mode switch) | **lifted** (in the widget that builds `MaterialApp`), or provided if a deep settings screen flips it | `MaterialApp` itself needs it, so it must live above `MaterialApp`. It is app-wide, not part of the cart. |
