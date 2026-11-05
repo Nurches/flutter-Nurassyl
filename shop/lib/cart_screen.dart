@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'main.dart';
+import 'models/book.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key, required this.items, required this.onRemove});

@@ -13,3 +13,14 @@
 **Rebuild count:** one tap on Add printed **7 lines**: `BooksScreen build` once plus
 `row …` six times, one per book. `setState` in `Shell` marks everything under it dirty, so one book
 added means the whole screen and every row are rebuilt.
+
+## Level 2 — A model with no widgets
+
+- `lib/models/cart.dart` imports only `package:flutter/foundation.dart`. The "no duplicates" rule lives in `add` and nowhere else.
+- The `main()` check before `runApp` (add two, add the first again, remove one) printed
+  **`1 items, 3100 ₸`** before the first frame. The lines were then deleted, and the same check now lives in
+  `test/cart_test.dart`.
+- `cart.items.add(books[0])` throws **`Unsupported operation: Cannot add to an unmodifiable list`**.
+  Only `add` can change the cart, and `add` always notifies.
+- A `BuildContext` field in `Cart` would break that `main()` check: no context exists before `runApp`.
+  If the model needs a context, it is doing a widget's job.
