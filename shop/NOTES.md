@@ -49,3 +49,28 @@ event handler, when the widget tree doesn't care about the value.
 **The silent one.** Using `context.read<Cart>().count` in `CartBadge.build` gives **no error at all**. It compiles and runs,
 and the badge is frozen at **0** forever, even after books are added, because the badge never said "I depend on the cart".
 `read` is a verb of `onPressed`, and `watch` is a verb of `build`.
+
+## Level 4 — Scope: select and Consumer
+
+Measured with `debugPrint('badge build')` / `debugPrint('row …')`. One book in the cart, the Cart screen open,
+**+** pressed three times, then the book removed:
+
+| Badge subscribes with | 3 × **+** | remove a book |
+|---|---|---|
+| `context.watch<Cart>().count` | **3** badge builds | 1 |
+| `context.select<Cart, int>((c) => c.count)` | **0** badge builds | 1 |
+
+Same model, same taps, one line changed in one widget. `watch` rebuilds on every `notifyListeners()`.
+`select` rebuilds only when the selected value (`count`) actually changes, and **+** does not change it.
+
+- The Books rows use `select<Cart, bool>((c) => c.qtyOf(b) > 0)` too: 3 × **+** rebuilt **0** rows. Removing the
+  book rebuilt **1** row, the one whose answer flipped back to "Add".
+- **Watch moved up on purpose** (`context.watch<Cart>()` in `BooksScreen.build`): 3 × **+** on the *Cart* screen
+  rebuilt `BooksScreen` **3** times and **18** rows (6 × 3), all on a screen nobody is looking at.
+  Subscribe where the value is shown, not where it is convenient.
+- The total line is a `Consumer<Cart>` whose `child` is `const _TotalLabel()` (icon + "Total"). On every notify
+  the builder runs and only the number changes. `total label build` printed **0** times during the taps,
+  because the label was built once.
+
+DevTools → Performance → *Track widget builds* shows the same picture. The numbers above come from the
+console lines, measured in a widget test that collects `debugPrint` output.

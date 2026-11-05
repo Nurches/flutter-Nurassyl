@@ -29,4 +29,14 @@ void main() {
     cart.clear();
     expect(calls, 3);
   });
+
+  test('quantities: count is distinct books, total is price × qty', () {
+    final cart = Cart();
+    cart.add(books[0]); // 4200
+    cart.add(books[1]); // 3100
+    cart.increment(books[0]);
+    expect(cart.qtyOf(books[0]), 2);
+    expect(cart.count, 2);
+    expect(cart.total, 4200 * 2 + 3100);
+  });
 }

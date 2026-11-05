@@ -35,7 +35,9 @@ class _BookRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final b = book;
     debugPrint('row ${b.title}');
-    final inCart = context.watch<Cart>().items.contains(b);
+    // select: rebuild this row only when ITS answer flips,
+    // not on every + somewhere in the cart.
+    final inCart = context.select<Cart, bool>((c) => c.qtyOf(b) > 0);
     return ListTile(
       title: Text(b.title),
       subtitle: Text('${b.author} · ${b.price} ₸'),

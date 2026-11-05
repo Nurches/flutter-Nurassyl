@@ -9,7 +9,7 @@ class CartBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     debugPrint('badge build');
-    final n = context.watch<Cart>().count;
+    final n = context.select<Cart, int>((c) => c.count);
     return IconButton(
       tooltip: 'Cart',
       onPressed: () => Navigator.of(context).pushNamed('/cart'),

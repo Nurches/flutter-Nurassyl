@@ -34,4 +34,23 @@ void main() {
     expect(find.text('Added'), findsOneWidget);
     expect(badge('1'), findsOneWidget);
   });
+
+  testWidgets('+ raises the quantity and the total, not the badge', (
+    tester,
+  ) async {
+    await tester.pumpWidget(app());
+    await tester.tap(find.widgetWithText(OutlinedButton, 'Add').first);
+    await tester.pump();
+    await tester.tap(find.byTooltip('Cart'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('One more'));
+    await tester.pump();
+    expect(find.text('×2'), findsOneWidget);
+    expect(find.text('8400 ₸'), findsOneWidget);
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(badge('1'), findsOneWidget);
+  });
 }
