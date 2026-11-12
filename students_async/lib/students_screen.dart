@@ -21,6 +21,8 @@ class _StudentsScreenState extends State<StudentsScreen> {
   Object? _error; // non-null = failed
   final _api = FakeApi();
 
+  bool _saving = false; // Level 5: a Save is in flight
+
   @override
   void initState() {
     super.initState();
@@ -45,6 +47,23 @@ class _StudentsScreenState extends State<StudentsScreen> {
     }
   }
 
+  // Takes the button's context: a callback guards its own context with
+  // context.mounted after every await (a State would check mounted).
+  Future<void> _save(BuildContext context) async {
+    setState(() => _saving = true);
+    try {
+      await _api.save(_students!.length);
+      if (!context.mounted) return;
+      Navigator.pop(context); // pop only on success
+    } on StateError catch (e) {
+      if (!context.mounted) return;
+      setState(() => _saving = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message)),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final busy = _students == null && _error == null;
@@ -65,6 +84,19 @@ class _StudentsScreenState extends State<StudentsScreen> {
         (null, final list?) when list.isEmpty => const EmptyView(),
         (null, final list?) => StudentList(list),
       },
+      floatingActionButton: _students == null
+          ? null
+          : FloatingActionButton(
+              tooltip: 'Save',
+              // null while saving: a second fast tap is not a second request.
+              onPressed: _saving ? null : () => _save(context),
+              child: _saving
+                  ? const SizedBox.square(
+                      dimension: 24,
+                      child: CircularProgressIndicator(strokeWidth: 2.5),
+                    )
+                  : const Icon(Icons.save),
+            ),
     );
   }
 }
