@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'countdown_screen.dart';
 import 'students_future_screen.dart';
 import 'students_screen.dart';
 
-/// Two ways in. Every screen is pushed, so Back disposes it — which is
+/// Three ways in. Every screen is pushed, so Back disposes it — which is
 /// exactly what the mounted / cancel() experiments need.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -25,6 +26,12 @@ class HomeScreen extends StatelessWidget {
           title: 'FutureBuilder',
           subtitle: 'A stored Future and a Switch that must not reload',
           builder: (_) => const StudentsFutureScreen(),
+        ),
+        _Entry(
+          icon: Icons.timer_outlined,
+          title: 'Countdown',
+          subtitle: 'async* — StreamBuilder vs listen + cancel()',
+          builder: (_) => const CountdownScreen(),
         ),
       ],
     ),
