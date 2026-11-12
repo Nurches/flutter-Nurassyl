@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'students_screen.dart';
 
 void main() => runApp(const App());
 
@@ -12,6 +13,6 @@ class App extends StatelessWidget {
     theme: ThemeData(
       colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
     ),
-    home: const Scaffold(body: Center(child: Text('Students'))),
+    home: const StudentsScreen(),
   );
 }
