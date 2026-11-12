@@ -1,0 +1,11 @@
+# The following line activates a set of recommended lints for Flutter apps,
+# packages, and plugins designed to encourage good coding practices.
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    # Added before the first await: a Future nobody awaits is a warning, not a surprise.
+    unawaited_futures: true
+
+formatter:
+  trailing_commas: preserve
